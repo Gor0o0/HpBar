@@ -1,20 +1,20 @@
 package hpBar
 
 import de.fabmax.kool.KoolApplication
-import de.fabmax.kool.addScene
+import de.fabmax.kool.addUiScene
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.modules.ui2.UiModifier.*
 import de.fabmax.kool.util.Color
 import kotlinx.coroutines.*
 
 // Flow корутины
-import kotlinx.coroutines.launch                    // запуск корутин
-import kotlinx.coroutines.flow.MutableSharedFlow    // радиостанция событий
-import kotlinx.coroutines.flow.SharedFlow           // чтение для подписчиков
-import kotlinx.coroutines.flow.MutableStateFlow     // табло состояний
-import kotlinx.coroutines.flow.StateFlow            // только для чтения
-import kotlinx.coroutines.flow.asSharedFlow         // отдать наружу только SharedFlow
-import kotlinx.coroutines.flow.asStateFlow          // отдать только StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
@@ -77,7 +77,7 @@ fun main() = KoolApplication {
         cmdFlow.collect { processCommand(it) }
     }
 
-    addScene {
+    addUiScene {
         //-=-=| Правый верх угол
         addPanelSurface {
             modifier
@@ -91,12 +91,13 @@ fun main() = KoolApplication {
                     modifier.onClick {
                         scope.launch {
                             _cmdFlow.emit(CmdTakeDmg("p1", 10))
-                            _cmdFlow.emit(CmdLog("p1", "DealDmgBtn pressed"))
+                            _cmdFlow.emit(CCmdLog("p1", "DealDmgBtn pressed"))
                         }
                     }
                 }
             }
         }
+
         //-=-=| Левый ниж угол
         addPanelSurface {
             modifier
@@ -120,7 +121,6 @@ fun main() = KoolApplication {
                     .background(RoundRectBackground(Color.RED, 8.dp))
             }
 
-            //> экран смерти
             if (hpState.use() == 0) {
                 Text("YOU DIET") {
                     modifier
