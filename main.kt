@@ -80,7 +80,7 @@ fun main() = KoolApplication {
     scope.launch {
         cmdFlow.collect { processCommand(it) }
     }
-    
+
     players.onEach { map ->
         val hp = map["p1"]!!.hp
         hpState.set(hp)
