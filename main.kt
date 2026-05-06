@@ -140,11 +140,14 @@ fun main() = KoolApplication {
 
             //> экран смерти
             if (hpState.use() == 0) {
-                Text("YOU DIET") {
-                    modifier
-                        .align(AlignmentX.Center, AlignmentY.Center)
-                        .textColor(Color.WHITE)
+                addPanelSurface {
+                    Text("YOU DIET") {
+                        modifier
+                            .align(AlignmentX.Center, AlignmentY.Center)
+                            .textColor(Color.WHITE)
+                    }
                 }
+
             }
         }
     }
