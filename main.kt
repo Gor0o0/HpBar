@@ -75,16 +75,17 @@ fun main() = KoolApplication {
     val hpState = mutableStateOf(100)
     val isDead = mutableStateOf(false)
 
-    players.onEach { map ->
-        val hp = map["p1"]!!.hp
-        hpState.set(hp)
-        isDead.set(hp <= 0)
-    }.launchIn(scope)
 
     val scope = CoroutineScope(Dispatchers.Default)
     scope.launch {
         cmdFlow.collect { processCommand(it) }
     }
+    
+    players.onEach { map ->
+        val hp = map["p1"]!!.hp
+        hpState.set(hp)
+        isDead.set(hp <= 0)
+    }.launchIn(scope)
 
     addScene {
         setupUiScene(ClearColorLoad)
@@ -103,7 +104,6 @@ fun main() = KoolApplication {
                     }
 
                     modifier.onClick {
-                        // если мёртв — просто игнорируем клик
                         if (isDead.use()) return@onClick
 
                         scope.launch {
