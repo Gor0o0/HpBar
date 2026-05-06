@@ -4,6 +4,7 @@ import de.fabmax.kool.KoolApplication
 import de.fabmax.kool.addScene
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.modules.ui2.UiModifier.*
+import de.fabmax.kool.pipeline.ClearColorLoad
 import de.fabmax.kool.util.Color
 import kotlinx.coroutines.*
 
@@ -78,6 +79,7 @@ fun main() = KoolApplication {
     }
 
     addScene {
+        setupUiScene(ClearColorLoad)
         //-=-=| Правый верх угол
         addPanelSurface {
             modifier
