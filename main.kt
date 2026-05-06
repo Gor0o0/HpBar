@@ -80,7 +80,44 @@ fun main() = KoolApplication {
 
     addScene {
         setupUiScene(ClearColorLoad)
-        //-=-=| Правый верх угол
+        //-=-=| Левый ниж угол (HP Bar + Diet Screen)
+        addPanelSurface {
+            modifier
+                .align(AlignmentX.End, AlignmentY.Bottom)
+                .margin(16.dp)
+                .padding(12.dp)
+                .width(300.dp)
+                .height(60.dp)
+                .background(RoundRectBackground(Color(0f, 0f, 0f, 0.6f), 12.dp))
+
+            val hpState = remember { mutableStateOf(100) }
+
+            // Подписываемся на изменения HP один раз
+            players.onEach { map ->
+                hpState.set(map["p1"]!!.hp)
+            }.launchIn(scope)
+
+            // HP Bar
+            Box {
+                modifier
+                    .width((hpState.use() * 3).dp)
+                    .height(24.dp)
+                    .background(RoundRectBackground(Color.RED, 8.dp))
+            }
+
+            // Экран смерти
+            if (hpState.use() == 0) {
+                Text("YOU DIET") {
+                    modifier
+                        .align(AlignmentX.Center, AlignmentY.Center)
+                        .textColor(Color.WHITE)
+                        .textAlignX(AlignmentX.Center)
+                        .fontSize(28.dp)
+                }
+            }
+        }
+
+        //-=-=| Правый верх угол — Кнопка
         addPanelSurface {
             modifier
                 .align(AlignmentX.Start, AlignmentY.Top)
@@ -90,44 +127,16 @@ fun main() = KoolApplication {
 
             Column {
                 Button("DealDamage") {
-                    modifier.onClick {
-                        scope.launch {
-                            _cmdFlow.emit(CmdTakeDmg("p1", 10))
-                            _cmdFlow.emit(CmdLog("p1", "DealDmgBtn pressed"))
-                        }
-                    }
-                }
-            }
-        }
-        //-=-=| Левый ниж угол
-        addPanelSurface {
-            modifier
-                .align(AlignmentX.End, AlignmentY.Bottom)
-                .margin(16.dp)
-                .padding(12.dp)
-                .width(300.dp)
-                .height(40.dp)
-                .background(RoundRectBackground(Color(0f, 0f, 0f, 0.6f), 12.dp))
-
-            val hpState = remember { mutableStateOf(100) }
-
-            players.onEach { map ->
-                hpState.set(map["p1"]!!.hp)
-            }.launchIn(scope)
-
-            Box {
-                modifier
-                    .width((hpState.use() * 3).dp)
-                    .height(24.dp)
-                    .background(RoundRectBackground(Color.RED, 8.dp))
-            }
-
-            //> экран смерти
-            if (hpState.use() == 0) {
-                Text("YOU DIET") {
                     modifier
-                        .align(AlignmentX.Center, AlignmentY.Center)
-                        .textColor(Color.WHITE)
+                        .enabled(hpState.use() > 0)   // ← вот главное изменение
+                        .onClick {
+                            if (hpState.use() <= 0) return@onClick // дополнительная защита
+
+                            scope.launch {
+                                _cmdFlow.emit(CmdTakeDmg("p1", 10))
+                                _cmdFlow.emit(CmdLog("p1", "DealDmgBtn pressed"))
+                            }
+                        }
                 }
             }
         }
